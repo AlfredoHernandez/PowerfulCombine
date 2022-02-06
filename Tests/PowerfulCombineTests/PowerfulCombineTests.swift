@@ -38,6 +38,14 @@ final class PowerfulCombineTests: XCTestCase {
         wait(for: [exp], timeout: 1.0)
     }
 
+    func test_aScheduler_canBeErasedToAnyScheduler() {
+        let sut = DispatchQueue
+            .global()
+            .eraseToAnyScheduler()
+
+        XCTAssertNotNil(sut, "Expected a scheduler erased to AnyScheduler")
+    }
+
     // MARK: - Helpers
 
     private func whenDispatchesOnBackground(_ sut: PassthroughSubject<Void, Error>) {
