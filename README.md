@@ -1,3 +1,3 @@
 # PowerfulCombine
 
-A description of this package.
+A package with powerful combine extensions. 🤟
