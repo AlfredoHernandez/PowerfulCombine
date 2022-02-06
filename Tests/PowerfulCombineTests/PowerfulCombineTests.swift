@@ -7,20 +7,42 @@ import PowerfulCombine
 import XCTest
 
 final class PowerfulCombineTests: XCTestCase {
+    private var cancellable: AnyCancellable?
+
     func test_dispatchsOnMainQueue_dispatchesOnMainQueue() {
         let sut = PassthroughSubject<Void, Error>()
 
         whenDispatchesOnBackground(sut)
 
-        _ = sut.dispatchOnMainQueue().sink { _ in } receiveValue: { _ in
+        cancellable = sut.dispatchOnMainQueue().sink { _ in } receiveValue: { _ in
             XCTAssertTrue(Thread.isMainThread, "Expected to receive on main thread.")
         }
     }
 
-    
+    func test_fallback_catchesErrorAndContinueWithFallbackPublisher() {
+        let sut = PassthroughSubject<String, Error>()
+        let fallbackPublisher = PassthroughSubject<String, Error>()
+        let exp = expectation(description: "Wait for subscription")
+
+        cancellable = sut
+            .eraseToAnyPublisher()
+            .dispatchOnMainQueue()
+            .fallback(to: fallbackPublisher.eraseToAnyPublisher())
+            .sink(receiveCompletion: { _ in }, receiveValue: { fallbackValue in
+                XCTAssertEqual(fallbackValue, "The fallback value")
+                exp.fulfill()
+            })
+
+        sut.send(completion: .failure(AnyError()))
+        fallbackPublisher.send("The fallback value")
+        wait(for: [exp], timeout: 1.0)
+    }
+
     // MARK: - Helpers
-    
+
     private func whenDispatchesOnBackground(_ sut: PassthroughSubject<Void, Error>) {
         DispatchQueue.global().async { sut.send(()) }
     }
+
+    private class AnyError: Error {}
 }
