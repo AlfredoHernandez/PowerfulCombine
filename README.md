@@ -1,5 +1,7 @@
 !["Powerful Combine"](./logo.png)
 
+[![Swift](https://github.com/AlfredoHernandez/PowerfulCombine/actions/workflows/swift.yml/badge.svg?branch=main)](https://github.com/AlfredoHernandez/PowerfulCombine/actions/workflows/swift.yml)
+
 A package with powerful combine extensions. 🤟
 
 ## Motivation
