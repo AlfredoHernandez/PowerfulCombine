@@ -6,7 +6,7 @@ import Combine
 import PowerfulCombine
 import XCTest
 
-final class PowerfulCombineTests: XCTestCase {
+final class PowerfulCombineExtensionsTests: XCTestCase {
     private var cancellable: AnyCancellable?
 
     func test_dispatchsOnMainQueue_dispatchesOnMainQueue() {
@@ -44,6 +44,19 @@ final class PowerfulCombineTests: XCTestCase {
             .eraseToAnyScheduler()
 
         XCTAssertNotNil(sut, "Expected a scheduler erased to AnyScheduler")
+    }
+
+    // MARK: - Powerful Combine Testing
+
+    func test_immediateScheduleAction() {
+        var isExecuted = false
+        let sut = DispatchQueue.testSchedule
+
+        sut.schedule { isExecuted = true }
+        XCTAssertFalse(isExecuted, "Expected to no execute the schedule action")
+
+        sut.advance()
+        XCTAssertTrue(isExecuted, "Expected to execute the schedule action")
     }
 
     // MARK: - Helpers
