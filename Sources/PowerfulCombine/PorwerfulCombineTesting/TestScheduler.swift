@@ -8,21 +8,21 @@ import Foundation
 public final class TestScheduler<SchedulerTimeType: Strideable, SchedulerOptions>: Scheduler where SchedulerTimeType.Stride: SchedulerTimeIntervalConvertible {
     public var now: SchedulerTimeType
     public var minimumTolerance: SchedulerTimeType.Stride = 0
-
-    private var scheduled = [(action: () -> Void, date: SchedulerTimeType)]()
+    private var lastId = 0
+    private var scheduled = [(id: Int, action: () -> Void, date: SchedulerTimeType)]()
 
     public init(now: SchedulerTimeType) {
         self.now = now
     }
 
     public func schedule(options _: SchedulerOptions?, _ action: @escaping () -> Void) {
-        scheduled.append((action, now))
+        scheduled.append((nextId(), action, now))
     }
 
     public func advance(by stride: SchedulerTimeType.Stride = .zero) {
         now = now.advanced(by: stride)
 
-        for (action, date) in scheduled {
+        for (id, action, date) in scheduled {
             if date <= now {
                 action()
             }
@@ -36,7 +36,7 @@ public final class TestScheduler<SchedulerTimeType: Strideable, SchedulerOptions
         options _: SchedulerOptions?,
         _ action: @escaping () -> Void
     ) {
-        scheduled.append((action, after))
+        scheduled.append((nextId(), action, after))
     }
 
     public func schedule(
@@ -46,16 +46,24 @@ public final class TestScheduler<SchedulerTimeType: Strideable, SchedulerOptions
         options _: SchedulerOptions?,
         _ action: @escaping () -> Void
     ) -> Cancellable {
+        let id = nextId()
         func scheduleAction(for date: SchedulerTimeType) -> () -> Void {
             { [weak self] in
                 action()
                 let nextDate = date.advanced(by: interval)
-                self?.scheduled.append((scheduleAction(for: nextDate), nextDate))
+                self?.scheduled.append((id, scheduleAction(for: nextDate), nextDate))
             }
         }
 
-        scheduled.append((scheduleAction(for: date), date))
-        return AnyCancellable {}
+        scheduled.append((id, scheduleAction(for: date), date))
+        return AnyCancellable { [weak self] in
+            self?.scheduled.removeAll(where: { $0.id == id })
+        }
+    }
+
+    private func nextId() -> Int {
+        lastId += 0
+        return lastId
     }
 }
 

@@ -35,4 +35,25 @@ final class TestSchedulerWithIntervalUseCaseTests: XCTestCase {
         testScheduler.advance(by: .seconds(1))
         XCTAssertEqual(executionCallCount, 3)
     }
+
+    func test_scheduleInterval_whenCancelSchedule() {
+        var executionCallCount = 0
+        let testScheduler = DispatchQueue.testSchedule
+
+        testScheduler.schedule(after: testScheduler.now, interval: .seconds(1)) {
+            executionCallCount += 1
+        }.store(in: &cancellables)
+        XCTAssertEqual(executionCallCount, 0)
+
+        testScheduler.advance()
+        XCTAssertEqual(executionCallCount, 1)
+
+        whenCancelAll()
+        testScheduler.advance(by: .seconds(1))
+        XCTAssertEqual(executionCallCount, 1, "Expected to cancel the schedule")
+    }
+
+    private func whenCancelAll() {
+        cancellables.removeAll()
+    }
 }
