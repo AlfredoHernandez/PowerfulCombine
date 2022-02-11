@@ -6,7 +6,7 @@ import Combine
 import PowerfulCombine
 import XCTest
 
-final class PowerfulCombineTestingTests: XCTestCase {
+final class TestSchedulerWhenScheduleUseCaseTests: XCTestCase {
     func test_immediateScheduleAction() {
         var isExecuted = false
         let testScheduler = DispatchQueue.testSchedule
