@@ -45,7 +45,7 @@ final class TestSchedulerWhenScheduleUseCaseTests: XCTestCase {
         testScheduler.advance()
         XCTAssertEqual(output, ["a value"], "Expected emmited value")
     }
-    
+
     func test_immediateScheduleWithMultiplePublishers() {
         var output = [String]()
         var cancellables = Set<AnyCancellable>()

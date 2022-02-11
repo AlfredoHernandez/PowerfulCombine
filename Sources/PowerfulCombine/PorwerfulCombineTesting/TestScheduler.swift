@@ -9,22 +9,35 @@ public final class TestScheduler<SchedulerTimeType: Strideable, SchedulerOptions
     public var now: SchedulerTimeType
     public var minimumTolerance: SchedulerTimeType.Stride = 0
 
-    private var scheduled = [() -> Void]()
+    private var scheduled = [(action: () -> Void, date: SchedulerTimeType)]()
 
     public init(now: SchedulerTimeType) {
         self.now = now
     }
 
     public func schedule(options _: SchedulerOptions?, _ action: @escaping () -> Void) {
-        scheduled.append(action)
+        scheduled.append((action, now))
     }
 
-    public func advance() {
-        scheduled.forEach { $0() }
-        scheduled.removeAll()
+    public func advance(by stride: SchedulerTimeType.Stride = .zero) {
+        now = now.advanced(by: stride)
+
+        for (action, date) in scheduled {
+            if date <= now {
+                action()
+            }
+        }
+        scheduled.removeAll(where: { $0.date <= self.now })
     }
 
-    public func schedule(after _: SchedulerTimeType, tolerance _: SchedulerTimeType.Stride, options _: SchedulerOptions?, _: @escaping () -> Void) {}
+    public func schedule(
+        after: SchedulerTimeType,
+        tolerance _: SchedulerTimeType.Stride,
+        options _: SchedulerOptions?,
+        _ action: @escaping () -> Void
+    ) {
+        scheduled.append((action, after))
+    }
 
     public func schedule(
         after _: SchedulerTimeType,
