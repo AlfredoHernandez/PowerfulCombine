@@ -40,13 +40,22 @@ public final class TestScheduler<SchedulerTimeType: Strideable, SchedulerOptions
     }
 
     public func schedule(
-        after _: SchedulerTimeType,
-        interval _: SchedulerTimeType.Stride,
+        after date: SchedulerTimeType,
+        interval: SchedulerTimeType.Stride,
         tolerance _: SchedulerTimeType.Stride,
         options _: SchedulerOptions?,
-        _: @escaping () -> Void
+        _ action: @escaping () -> Void
     ) -> Cancellable {
-        AnyCancellable {}
+        func scheduleAction(for date: SchedulerTimeType) -> () -> Void {
+            { [weak self] in
+                action()
+                let nextDate = date.advanced(by: interval)
+                self?.scheduled.append((scheduleAction(for: nextDate), nextDate))
+            }
+        }
+
+        scheduled.append((scheduleAction(for: date), date))
+        return AnyCancellable {}
     }
 }
 
