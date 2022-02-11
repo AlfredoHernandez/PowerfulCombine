@@ -17,4 +17,17 @@ final class PowerfulCombineTestingTests: XCTestCase {
         sut.advance()
         XCTAssertTrue(isExecuted, "Expected to execute the schedule action")
     }
+    
+    func test_multipleImmediateScheduleActions() {
+        var executionCallCount = 0
+        let sut = DispatchQueue.testSchedule
+        
+        sut.schedule { executionCallCount += 1 }
+        sut.schedule { executionCallCount += 1 }
+        
+        XCTAssertEqual(executionCallCount, 0, "Expected no actions executed")
+        
+        sut.advance()
+        XCTAssertEqual(executionCallCount, 2, "Expected actions executed")
+    }
 }

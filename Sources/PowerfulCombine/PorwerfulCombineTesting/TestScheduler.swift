@@ -39,6 +39,6 @@ public final class TestScheduler<SchedulerTimeType: Strideable, SchedulerOptions
 
 public extension DispatchQueue {
     static var testSchedule: TestScheduler<DispatchQueue.SchedulerTimeType, DispatchQueue.SchedulerOptions> {
-        TestScheduler(now: DispatchQueue.SchedulerTimeType(.init(uptimeNanoseconds: 0)))
+        TestScheduler(now: DispatchQueue.SchedulerTimeType(.init(uptimeNanoseconds: 1)))
     }
 }
