@@ -24,7 +24,7 @@ public final class TestScheduler<SchedulerTimeType: Strideable, SchedulerOptions
 
         var index = 0
         while index < scheduled.count {
-            let (id, action, date) = scheduled[index]
+            let (_ , action, date) = scheduled[index]
             if date <= now {
                 action()
                 scheduled.remove(at: index)
