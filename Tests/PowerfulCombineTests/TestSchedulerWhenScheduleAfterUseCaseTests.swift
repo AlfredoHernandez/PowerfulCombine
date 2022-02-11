@@ -24,4 +24,15 @@ class TestSchedulerWhenScheduleAfterUseCaseTests: XCTestCase {
         testScheduler.advance(by: .microseconds(1))
         XCTAssertTrue(isExecuted)
     }
+
+    func test_advance_schedulesAfterLongDelay() {
+        var isExecuted = false
+        let testScheduler = DispatchQueue.testSchedule
+
+        testScheduler.schedule(after: testScheduler.now.advanced(by: .seconds(1_000_000))) { isExecuted = true }
+        XCTAssertFalse(isExecuted)
+
+        testScheduler.advance(by: .seconds(1_000_000))
+        XCTAssertTrue(isExecuted)
+    }
 }
