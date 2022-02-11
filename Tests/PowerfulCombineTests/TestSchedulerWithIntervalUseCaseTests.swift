@@ -34,6 +34,12 @@ final class TestSchedulerWithIntervalUseCaseTests: XCTestCase {
 
         testScheduler.advance(by: .seconds(1))
         XCTAssertEqual(executionCallCount, 3)
+
+        testScheduler.advance(by: .seconds(2))
+        XCTAssertEqual(executionCallCount, 5, "Expected to increment two executions more")
+
+        testScheduler.advance(by: .seconds(5))
+        XCTAssertEqual(executionCallCount, 10, "Expected to increment five executions more")
     }
 
     func test_scheduleInterval_whenCancelSchedule() {

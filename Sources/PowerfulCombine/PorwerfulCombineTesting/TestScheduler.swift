@@ -22,12 +22,16 @@ public final class TestScheduler<SchedulerTimeType: Strideable, SchedulerOptions
     public func advance(by stride: SchedulerTimeType.Stride = .zero) {
         now = now.advanced(by: stride)
 
-        for (id, action, date) in scheduled {
+        var index = 0
+        while index < scheduled.count {
+            let (id, action, date) = scheduled[index]
             if date <= now {
                 action()
+                scheduled.remove(at: index)
+            } else {
+                index += 1
             }
         }
-        scheduled.removeAll(where: { $0.date <= self.now })
     }
 
     public func schedule(
