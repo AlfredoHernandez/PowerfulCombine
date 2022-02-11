@@ -45,4 +45,21 @@ final class PowerfulCombineTestingTests: XCTestCase {
         testScheduler.advance()
         XCTAssertEqual(output, ["a value"], "Expected emmited value")
     }
+    
+    func test_immediateScheduleWithMultiplePublishers() {
+        var output = [String]()
+        var cancellables = Set<AnyCancellable>()
+        let testScheduler = DispatchQueue.testSchedule
+        let secondPublisher = Just("another value").receive(on: testScheduler)
+
+        Just("a value")
+            .receive(on: testScheduler)
+            .merge(with: secondPublisher)
+            .sink(receiveValue: { output.append($0) })
+            .store(in: &cancellables)
+        XCTAssertEqual(output, [], "Expected no emmited values")
+
+        testScheduler.advance()
+        XCTAssertEqual(output, ["a value", "another value"], "Expected emmited value")
+    }
 }
