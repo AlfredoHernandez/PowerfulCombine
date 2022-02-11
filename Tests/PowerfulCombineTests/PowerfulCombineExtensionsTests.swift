@@ -6,7 +6,7 @@ import Combine
 import PowerfulCombine
 import XCTest
 
-final class PowerfulCombineTests: XCTestCase {
+final class PowerfulCombineExtensionsTests: XCTestCase {
     private var cancellable: AnyCancellable?
 
     func test_dispatchsOnMainQueue_dispatchesOnMainQueue() {
