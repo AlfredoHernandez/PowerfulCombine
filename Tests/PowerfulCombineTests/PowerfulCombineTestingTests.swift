@@ -17,17 +17,32 @@ final class PowerfulCombineTestingTests: XCTestCase {
         sut.advance()
         XCTAssertTrue(isExecuted, "Expected to execute the schedule action")
     }
-    
+
     func test_multipleImmediateScheduleActions() {
         var executionCallCount = 0
         let sut = DispatchQueue.testSchedule
-        
+
         sut.schedule { executionCallCount += 1 }
         sut.schedule { executionCallCount += 1 }
-        
+
         XCTAssertEqual(executionCallCount, 0, "Expected no actions executed")
-        
+
         sut.advance()
         XCTAssertEqual(executionCallCount, 2, "Expected actions executed")
+    }
+
+    func test_immediateScheduleWithPublisher() {
+        var output = [String]()
+        var cancellables = Set<AnyCancellable>()
+        let sut = DispatchQueue.testSchedule
+
+        Just("a value")
+            .receive(on: sut)
+            .sink(receiveValue: { output.append($0) })
+            .store(in: &cancellables)
+        XCTAssertEqual(output, [], "Expected no emmited values")
+
+        sut.advance()
+        XCTAssertEqual(output, ["a value"], "Expected emmited value")
     }
 }
