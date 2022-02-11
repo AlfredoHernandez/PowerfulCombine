@@ -18,7 +18,10 @@ class TestSchedulerWhenScheduleAfterUseCaseTests: XCTestCase {
         testScheduler.advance(by: .milliseconds(499))
         XCTAssertFalse(isExecuted)
 
-        testScheduler.advance(by: .milliseconds(1))
+        testScheduler.advance(by: .microseconds(999))
+        XCTAssertFalse(isExecuted)
+
+        testScheduler.advance(by: .microseconds(1))
         XCTAssertTrue(isExecuted)
     }
 }
