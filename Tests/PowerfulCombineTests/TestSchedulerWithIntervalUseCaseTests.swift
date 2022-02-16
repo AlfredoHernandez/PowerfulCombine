@@ -54,12 +54,12 @@ final class TestSchedulerWithIntervalUseCaseTests: XCTestCase {
         testScheduler.advance()
         XCTAssertEqual(executionCallCount, 1)
 
-        whenCancelAll()
+        whenCancelScheduler()
         testScheduler.advance(by: .seconds(1))
         XCTAssertEqual(executionCallCount, 1, "Expected to cancel the schedule")
     }
 
-    private func whenCancelAll() {
+    private func whenCancelScheduler() {
         cancellables.removeAll()
     }
 }
