@@ -46,19 +46,6 @@ final class PowerfulCombineExtensionsTests: XCTestCase {
         XCTAssertNotNil(sut, "Expected a scheduler erased to AnyScheduler")
     }
 
-    // MARK: - Powerful Combine Testing
-
-    func test_immediateScheduleAction() {
-        var isExecuted = false
-        let sut = DispatchQueue.testSchedule
-
-        sut.schedule { isExecuted = true }
-        XCTAssertFalse(isExecuted, "Expected to no execute the schedule action")
-
-        sut.advance()
-        XCTAssertTrue(isExecuted, "Expected to execute the schedule action")
-    }
-
     // MARK: - Helpers
 
     private func whenDispatchesOnBackground(_ sut: PassthroughSubject<Void, Error>) {
