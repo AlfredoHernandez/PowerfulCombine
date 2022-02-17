@@ -58,6 +58,7 @@ final class TestSchedulerWithIntervalUseCaseTests: XCTestCase {
         XCTAssertEqual(values, ["Hello", "Hello", "World"])
     }
 
+    // MARK: This test behaves differently on M1 and Intel chips.
     func test_scheduleNow() {
         var times: [UInt64] = []
         let testScheduler = DispatchQueue.testScheduler
