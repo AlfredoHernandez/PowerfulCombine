@@ -36,8 +36,8 @@ public final class TestScheduler<SchedulerTimeType: Strideable, SchedulerOptions
         now = nextDate
 
         while let (_, action, date) = scheduled.first, date == nextDate {
-            action()
             scheduled.removeFirst()
+            action()
         }
 
         advance(by: nextStride)
@@ -63,9 +63,9 @@ public final class TestScheduler<SchedulerTimeType: Strideable, SchedulerOptions
         let id = nextId()
         func scheduleAction(for date: SchedulerTimeType) -> () -> Void {
             { [weak self] in
-                action()
                 let nextDate = date.advanced(by: interval)
                 self?.scheduled.append((id, scheduleAction(for: nextDate), nextDate))
+                action()
             }
         }
 

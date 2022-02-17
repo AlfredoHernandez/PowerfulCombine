@@ -108,6 +108,29 @@ final class TestSchedulerWithIntervalUseCaseTests: XCTestCase {
         XCTAssertEqual(executionCallCount, 1, "Expected to cancel the schedule")
     }
 
+    func test_whenDebounceAndReceiveOnTestScheduler() {
+        let testScheduler = DispatchQueue.testScheduler
+        let subject = PassthroughSubject<Void, Never>()
+        var count = 0
+
+        subject
+            .debounce(for: 1, scheduler: testScheduler)
+            .receive(on: testScheduler)
+            .sink { count += 1 }
+            .store(in: &cancellables)
+
+        subject.send()
+        testScheduler.advance(by: 100)
+        XCTAssertEqual(count, 1, "Expected one count")
+
+        subject.send()
+        subject.send()
+        testScheduler.advance(by: 10)
+        XCTAssertEqual(count, 2, "Expected one count")
+    }
+
+    // MARK: - Helpers
+
     private func whenCancelScheduler() {
         cancellables.removeAll()
     }
