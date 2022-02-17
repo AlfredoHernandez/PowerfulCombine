@@ -20,27 +20,37 @@ public final class TestScheduler<SchedulerTimeType: Strideable, SchedulerOptions
     }
 
     public func advance(by stride: SchedulerTimeType.Stride = .zero) {
-        now = now.advanced(by: stride)
-
-        var index = 0
-        while index < scheduled.count {
-            let (_, action, date) = scheduled[index]
-            if date <= now {
-                action()
-                scheduled.remove(at: index)
-            } else {
-                index += 1
-            }
+        scheduled.sort { lhs, rhs in
+            (lhs.date, lhs.id) < (rhs.date, rhs.id)
         }
+
+        guard
+            let nextDate = scheduled.first?.date,
+            self.now.advanced(by: stride) >= nextDate
+        else {
+            now = now.advanced(by: stride)
+            return
+        }
+
+        let nextStride = stride - now.distance(to: nextDate)
+        now = nextDate
+
+        while let (_, action, date) = scheduled.first, date == nextDate {
+            action()
+            scheduled.removeFirst()
+        }
+
+        advance(by: nextStride)
+        scheduled.removeAll(where: { $0.date <= self.now })
     }
 
     public func schedule(
-        after: SchedulerTimeType,
+        after date: SchedulerTimeType,
         tolerance _: SchedulerTimeType.Stride,
         options _: SchedulerOptions?,
         _ action: @escaping () -> Void
     ) {
-        scheduled.append((nextId(), action, after))
+        scheduled.append((nextId(), action, date))
     }
 
     public func schedule(
@@ -66,7 +76,7 @@ public final class TestScheduler<SchedulerTimeType: Strideable, SchedulerOptions
     }
 
     private func nextId() -> Int {
-        lastId += 0
+        lastId += 1
         return lastId
     }
 }

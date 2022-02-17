@@ -42,6 +42,48 @@ final class TestSchedulerWithIntervalUseCaseTests: XCTestCase {
         XCTAssertEqual(executionCallCount, 10, "Expected to increment five executions more")
     }
 
+    func test_whenScheduleTwoIntervals_keepsTrackingInOrder() {
+        let testScheduler = DispatchQueue.testSchedule
+        var values: [String] = []
+
+        testScheduler.schedule(after: testScheduler.now.advanced(by: 1), interval: .seconds(1)) {
+            values.append("Hello")
+        }.store(in: &cancellables)
+        testScheduler.schedule(after: testScheduler.now.advanced(by: 2), interval: .seconds(2)) {
+            values.append("World")
+        }.store(in: &cancellables)
+        XCTAssertEqual(values, [])
+
+        testScheduler.advance(by: 2)
+        XCTAssertEqual(values, ["Hello", "Hello", "World"])
+    }
+
+    func test_scheduleNow() {
+        var times: [UInt64] = []
+        let testScheduler = DispatchQueue.testSchedule
+        testScheduler.schedule(after: testScheduler.now, interval: 1) {
+            times.append(testScheduler.now.dispatchTime.uptimeNanoseconds)
+        }
+        .store(in: &cancellables)
+
+        XCTAssertEqual(times, [])
+        testScheduler.advance(by: 3)
+        XCTAssertEqual(times, [41, 1_000_000_041, 2_000_000_041, 3_000_000_041])
+    }
+
+    func test_verify_schedulerRunsNTimes() {
+        var values = [Int]()
+        let testScheduler = DispatchQueue.testSchedule
+
+        testScheduler.schedule(after: testScheduler.now, interval: .seconds(1)) {
+            values.append(values.count)
+        }.store(in: &cancellables)
+        XCTAssertEqual(values, [], "Expected no captured values")
+
+        testScheduler.advance(by: .seconds(1000))
+        XCTAssertEqual(values, Array(0 ... 1000))
+    }
+
     func test_scheduleInterval_whenCancelSchedule() {
         var executionCallCount = 0
         let testScheduler = DispatchQueue.testSchedule
