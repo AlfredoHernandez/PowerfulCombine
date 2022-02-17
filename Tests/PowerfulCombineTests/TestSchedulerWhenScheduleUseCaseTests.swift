@@ -9,7 +9,7 @@ import XCTest
 final class TestSchedulerWhenScheduleUseCaseTests: XCTestCase {
     func test_immediateScheduleAction() {
         var isExecuted = false
-        let testScheduler = DispatchQueue.testSchedule
+        let testScheduler = DispatchQueue.testScheduler
 
         testScheduler.schedule { isExecuted = true }
         XCTAssertFalse(isExecuted, "Expected to no execute the schedule action")
@@ -20,7 +20,7 @@ final class TestSchedulerWhenScheduleUseCaseTests: XCTestCase {
 
     func test_multipleImmediateScheduleActions() {
         var executionCallCount = 0
-        let testScheduler = DispatchQueue.testSchedule
+        let testScheduler = DispatchQueue.testScheduler
 
         testScheduler.schedule { executionCallCount += 1 }
         testScheduler.schedule { executionCallCount += 1 }
@@ -34,7 +34,7 @@ final class TestSchedulerWhenScheduleUseCaseTests: XCTestCase {
     func test_immediateScheduleWithPublisher() {
         var output = [String]()
         var cancellables = Set<AnyCancellable>()
-        let testScheduler = DispatchQueue.testSchedule
+        let testScheduler = DispatchQueue.testScheduler
 
         Just("a value")
             .receive(on: testScheduler)
@@ -49,7 +49,7 @@ final class TestSchedulerWhenScheduleUseCaseTests: XCTestCase {
     func test_immediateScheduleWithMultiplePublishers() {
         var output = [String]()
         var cancellables = Set<AnyCancellable>()
-        let testScheduler = DispatchQueue.testSchedule
+        let testScheduler = DispatchQueue.testScheduler
         let secondPublisher = Just("another value").receive(on: testScheduler)
 
         Just("a value")

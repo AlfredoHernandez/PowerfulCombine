@@ -10,7 +10,7 @@ final class TestSchedulerWithIntervalUseCaseTests: XCTestCase {
 
     func test_advance_withInterval() {
         var executionCallCount = 0
-        let testScheduler = DispatchQueue.testSchedule
+        let testScheduler = DispatchQueue.testScheduler
 
         testScheduler.schedule(after: testScheduler.now, interval: .seconds(1)) {
             executionCallCount += 1
@@ -43,7 +43,7 @@ final class TestSchedulerWithIntervalUseCaseTests: XCTestCase {
     }
 
     func test_whenScheduleTwoIntervals_keepsTrackingInOrder() {
-        let testScheduler = DispatchQueue.testSchedule
+        let testScheduler = DispatchQueue.testScheduler
         var values: [String] = []
 
         testScheduler.schedule(after: testScheduler.now.advanced(by: 1), interval: .seconds(1)) {
@@ -60,7 +60,7 @@ final class TestSchedulerWithIntervalUseCaseTests: XCTestCase {
 
     func test_scheduleNow() {
         var times: [UInt64] = []
-        let testScheduler = DispatchQueue.testSchedule
+        let testScheduler = DispatchQueue.testScheduler
         testScheduler.schedule(after: testScheduler.now, interval: 1) {
             times.append(testScheduler.now.dispatchTime.uptimeNanoseconds)
         }
@@ -73,7 +73,7 @@ final class TestSchedulerWithIntervalUseCaseTests: XCTestCase {
 
     func test_verify_schedulerRunsNTimes() {
         var values = [Int]()
-        let testScheduler = DispatchQueue.testSchedule
+        let testScheduler = DispatchQueue.testScheduler
 
         testScheduler.schedule(after: testScheduler.now, interval: .seconds(1)) {
             values.append(values.count)
@@ -86,7 +86,7 @@ final class TestSchedulerWithIntervalUseCaseTests: XCTestCase {
 
     func test_scheduleInterval_whenCancelSchedule() {
         var executionCallCount = 0
-        let testScheduler = DispatchQueue.testSchedule
+        let testScheduler = DispatchQueue.testScheduler
 
         testScheduler.schedule(after: testScheduler.now, interval: .seconds(1)) {
             executionCallCount += 1

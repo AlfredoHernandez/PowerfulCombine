@@ -7,7 +7,7 @@ import XCTest
 class TestSchedulerWhenScheduleAfterUseCaseTests: XCTestCase {
     func test_advance_schedulesAfterDelay() {
         var isExecuted = false
-        let testScheduler = DispatchQueue.testSchedule
+        let testScheduler = DispatchQueue.testScheduler
 
         testScheduler.schedule(after: testScheduler.now.advanced(by: .seconds(1))) { isExecuted = true }
         XCTAssertFalse(isExecuted)
@@ -27,7 +27,7 @@ class TestSchedulerWhenScheduleAfterUseCaseTests: XCTestCase {
 
     func test_advance_schedulesAfterLongDelay() {
         var isExecuted = false
-        let testScheduler = DispatchQueue.testSchedule
+        let testScheduler = DispatchQueue.testScheduler
 
         testScheduler.schedule(after: testScheduler.now.advanced(by: .seconds(1_000_000))) { isExecuted = true }
         XCTAssertFalse(isExecuted)
