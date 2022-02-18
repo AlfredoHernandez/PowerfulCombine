@@ -45,7 +45,10 @@ public struct AnyScheduler<SchedulerTimeType: Strideable, SchedulerOptions>: Sch
 }
 
 public extension Scheduler {
-    func eraseToAnyScheduler() -> AnyScheduler<SchedulerTimeType, SchedulerOptions> {
+    func eraseToAnyScheduler() -> AnySchedulerOf<Self> {
         AnyScheduler(self)
     }
 }
+
+/** A type erasing for schedulers */
+public typealias AnySchedulerOf<S: Scheduler> = AnyScheduler<S.SchedulerTimeType, S.SchedulerOptions>
