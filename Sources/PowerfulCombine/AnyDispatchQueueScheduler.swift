@@ -4,7 +4,7 @@
 
 import Foundation
 
-public typealias AnyDispatchQueueScheduler = AnyScheduler<DispatchQueue.SchedulerTimeType, DispatchQueue.SchedulerOptions>
+public typealias AnyDispatchQueueScheduler = AnySchedulerOf<DispatchQueue>
 
 public extension AnyDispatchQueueScheduler {
     static var immediateOnMainQueue: Self {
